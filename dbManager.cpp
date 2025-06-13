@@ -1,6 +1,11 @@
 #include "dbManager.h"
+#include <QFile>
 
 DbManager::DbManager(const QString& path) {
+
+    QFile dbFile(path);
+    bool dbExists = dbFile.exists();
+
     m_db = QSqlDatabase::addDatabase("QSQLITE");
     m_db.setDatabaseName(path);
 
@@ -8,6 +13,9 @@ DbManager::DbManager(const QString& path) {
         qDebug() << "Error: Connection with database failed";
     } else {
         qDebug() << "Database: connect ok";
+        if (!dbExists) {
+            createTables();
+    }
     }
 }
 
@@ -512,3 +520,66 @@ bool DbManager::changeRoomStatus(const QString& healthCardNumber, const QString&
     }
     return true;
 }
+
+void DbManager::createTables() {
+    QSqlQuery query(m_db);
+
+    query.exec("CREATE TABLE IF NOT EXISTS patients ("
+               "health_card_number TEXT PRIMARY KEY,"
+               "first_name TEXT,"
+               "last_name TEXT,"
+               "date_of_birth TEXT,"
+               "gender TEXT,"
+               "blood_type TEXT,"
+               "address TEXT,"
+               "phone_number TEXT,"
+               "email_address TEXT,"
+               "insurance_company TEXT,"
+               "primary_care_physician TEXT,"
+               "room_number TEXT"
+               ");");
+
+    query.exec("CREATE TABLE IF NOT EXISTS doctors ("
+               "doctor_id TEXT PRIMARY KEY,"
+               "specialization TEXT,"
+               "years_experience TEXT,"
+               "first_name TEXT,"
+               "last_name TEXT,"
+               "date_of_birth TEXT,"
+               "gender TEXT,"
+               "phone_number TEXT,"
+               "email TEXT,"
+               "address TEXT"
+               ");");
+
+    query.exec("CREATE TABLE IF NOT EXISTS emergencies ("
+               "health_card_number TEXT PRIMARY KEY,"
+               "first_name TEXT,"
+               "last_name TEXT,"
+               "date_of_birth TEXT,"
+               "gender TEXT,"
+               "blood_type TEXT,"
+               "emergency_contact_number TEXT,"
+               "emergency_contact_relation TEXT,"
+               "emergency_contact_name TEXT,"
+               "emergency_reason TEXT,"
+               "symptoms TEXT,"
+               "current_medical_conditions TEXT,"
+               "allergies TEXT,"
+               "medication TEXT,"
+               "emergency_time TEXT"
+               ");");
+
+    query.exec("CREATE TABLE IF NOT EXISTS rooms ("
+               "room_number TEXT PRIMARY KEY,"
+               "room_type TEXT,"
+               "status TEXT"
+               ");");
+
+    query.exec("CREATE TABLE IF NOT EXISTS room_assignments ("
+               "room_number TEXT,"
+               "health_card_number TEXT,"
+               "assigned_date TEXT"
+               ");");
+}
+

@@ -28,6 +28,8 @@ public:
     bool changeRoomStatus(const QString& healthCardNumber, const QString& roomNumber);
     bool viewDoctor(QTableWidget* tableWidget);
     bool addRoom(const QString &roomNumber, const QString &roomType, const QString &status);
+    void createTables();
+
 
 private:
     QSqlDatabase m_db;
