@@ -1,0 +1,15 @@
+build-*/
+release/
+debug/
+
+*.pro.user
+*.autosave
+*.qrc.depends
+
+*.o
+*.obj
+*.log
+*.db
+*.sqlite
+*.exe
+.idea/
